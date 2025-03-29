@@ -2,14 +2,15 @@ import zxcvbn as zx
 from langchain_ollama import OllamaLLM
 
 
-
-def get_password():
+def get_password() -> str:
+    """Prompts the user to enter a password and returns it."""
     while not (password := input("Enter password: ")):
         pass
     return password
 
 
 def assess_password(password : str) -> dict:
+    """Analyzes the strength of a given password using the zxcvbn library and returns the results."""
     assessment = zx.zxcvbn(password)
     return assessment
 
@@ -39,6 +40,7 @@ def main():
     if wants_feedback == "yes":
         ai_response = generate_response(f"Short response. Give feedback on how to make this password stronger, you can be a bit humours based on what the password is but still educational: {password}")
         print(ai_response)
+    
 
 
 
