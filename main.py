@@ -21,19 +21,10 @@ def display_assessment_results(assessment : dict):
     print(f"Crack time: {password_crack_time}\n")
 
 
-def generate_feedback(password : str) -> str:
-    model = OllamaLLM(model = "llama3.2")
-    feedback = model.invoke(input = f"Short response. Give feedback on the strength of this password: {password}")
-    return feedback
-
-
-
-
 def generate_response(prompt : str) -> str:
     model = OllamaLLM(model = "llama3.2")
     response = model.invoke(input = prompt)
     return response
-
 
 
 def main():
@@ -43,6 +34,11 @@ def main():
     display_assessment_results(password_assessment)
     ai_response = generate_response(f"Short response. No first person. Make a joke about how secure this password is: {password}")
     print(ai_response + "\n")
+
+    wants_feedback = input("Would you like some feedback on how to make the password stronger?").lower()
+    if wants_feedback == "yes":
+        ai_response = generate_response(f"Short response. Give feedback on how to make this password stronger, you can be a bit humours based on what the password is but still educational: {password}")
+        print(ai_response)
 
 
 
