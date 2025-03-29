@@ -1,25 +1,39 @@
-import getpass
 import zxcvbn as zx
-import pprint as pretty_print
+from langchain_ollama import OllamaLLM
 
 
 
-def check_password(password : str) -> dict:
-    password_feedback = zx.zxcvbn(password)
-    return password_feedback
+
+def assess_password(password : str) -> dict:
+    assessment = zx.zxcvbn(password)
+    return assessment
+
+def generate_feedback(password : str) -> str:
+    model = OllamaLLM(model = "llama3.2")
+    feedback = model.invoke(input = f"Short response. Give feedback on the strength of this password: {password}")
+    return feedback
 
 
 def main():
 
-    # Get password and assess it
+    # Get password and assess it's strength
     print("\nPassword Strength Checker")
-    password = input("\nEnter a password: ")
-    password_feedback = check_password(password)
+    password = input("\nEnter password: ")
+    password_assessment = assess_password(password)
 
     # Display password feedback
-    print(f"Score: {password_feedback["score"]}/4")
-    print(f"{password_feedback['crack_times_display']["offline_slow_hashing_1e4_per_second"]}")
-    print(password_feedback["feedback"]["suggestions"])
+    password_score = password_assessment["score"]
+    password_crack_time = password_assessment['crack_times_display']["offline_slow_hashing_1e4_per_second"]
+    print(f"\nScore: {password_score}/4")
+    print(f"Crack time: {password_crack_time}\n")
 
 
-    # Default to code!
+    wants_feedback = input("Would you like some feedback?")
+
+    #feedback = generate_feedback(password)
+    #print(feedback)
+
+
+
+
+main()
