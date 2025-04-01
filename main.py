@@ -3,6 +3,8 @@ from langchain_ollama import OllamaLLM
 
 
 AI_JOKE_PROMPT = "Short response. No first person. Make a joke about how secure this password is: "
+AI_FEEDBACK_PROMPT = """Short response. Give feedback on how to make this password stronger, be 
+                        humorous based on what the password is but still educational: """
 
 
 def get_password() -> str:
@@ -47,11 +49,9 @@ def main():
     password_joke = generate_ai_response(prompt = ai_prompt)
     print(password_joke + "\n")
 
-    # wants_feedback = input("Would you like some feedback on how to make the password stronger?").lower()
-    # if wants_feedback == "yes":
-    #     ai_response = generate_response(f"Short response. Give feedback on how to make this password stronger, you can be a bit humours based on what the password is but still educational: {password}")
-    #     print(ai_response)
-    
-
-
-main()
+    # Check if the user wants more feedback 
+    wants_feedback = input("Would you like some feedback on how to make the password stronger? ").lower()
+    if wants_feedback == "yes":
+        ai_prompt = AI_FEEDBACK_PROMPT + password
+        ai_response = generate_ai_response(ai_prompt)
+        print("\n" + ai_response + "\n")
