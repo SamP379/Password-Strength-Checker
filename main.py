@@ -2,9 +2,9 @@ import zxcvbn as zx
 from langchain_ollama import OllamaLLM
 
 
-AI_JOKE_PROMPT = "Short response. No first person. Make a joke about how secure this password is: "
-AI_FEEDBACK_PROMPT = """Short response. Give feedback on how to make this password stronger, be 
-                        humorous based on what the password is but still educational: """
+LLAMA_JOKE_PROMPT = "Short response. No first person. Make a joke about how secure this password is: "
+LLAMA_FEEDBACK_PROMPT = """Short response. Give feedback on how to make this password stronger, be 
+                           humorous based on what the password is but still educational: """
 
 
 def get_password() -> str:
@@ -14,44 +14,54 @@ def get_password() -> str:
     return password
 
 
-def assess_password(password : str) -> dict:
+def get_password_assessment(password : str) -> dict:
     """Analyzes the strength of a given password using the zxcvbn library and returns the results."""
     assessment = zx.zxcvbn(password)
     return assessment
 
 
 def display_assessment_results(assessment : dict):
-    """Displays the results of the password assessment using the zxcvbn library."""
+    """Displays the results of the password assessment."""
     password_score = assessment["score"]
     password_crack_time = assessment['crack_times_display']["offline_slow_hashing_1e4_per_second"]
     print(f"\nScore: {password_score}/4")
     print(f"Crack time: {password_crack_time}\n")
 
 
-def generate_ai_response(prompt : str) -> str:
+def get_llama_response(prompt : str) -> str:
     """Generates a response from the llama3.2 LLM using a given prompt."""
-    model = OllamaLLM(model = "llama3.2")
-    response = model.invoke(input = prompt)
-    return response
+    try:
+        model = OllamaLLM(model = "llama3.2")
+        response = model.invoke(input = prompt)
+        return response
+    except Exception as error:
+        print(f"An error occured: {error}")
+        return None
 
 
 def main():
 
     print("\nPassword Strength Checker\n")
 
-    # Get a password from the user and assess its strength
+    # Get password from the user and assess its strength
     password = get_password()
-    password_assessment = assess_password(password)
+    password_assessment = get_password_assessment(password)
     display_assessment_results(password_assessment)
 
-    # Get an ai-generated joke about the entered password
-    ai_prompt = AI_JOKE_PROMPT + password
-    password_joke = generate_ai_response(prompt = ai_prompt)
-    print(password_joke + "\n")
+    # Get an AI-generated joke about the entered password
+    llama_prompt = LLAMA_JOKE_PROMPT + password
+    llama_response = get_llama_response(prompt = llama_prompt)
+    if llama_response is not None:
+        print(llama_response + "\n")
 
-    # Check if the user wants more feedback 
+    # Check if the user wants ai-generated feedback 
     wants_feedback = input("Would you like some feedback on how to make the password stronger? ").lower()
     if wants_feedback == "yes":
-        ai_prompt = AI_FEEDBACK_PROMPT + password
-        ai_response = generate_ai_response(ai_prompt)
-        print("\n" + ai_response + "\n")
+        llama_prompt = LLAMA_FEEDBACK_PROMPT + password
+        llama_response = get_llama_response(prompt = llama_prompt)
+        if llama_response is not None:
+            print("\n" + llama_response + "\n")
+
+
+if __name__ == "__main__":
+    main()
