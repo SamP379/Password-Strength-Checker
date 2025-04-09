@@ -60,7 +60,8 @@ def main():
         llama_prompt = LLAMA_FEEDBACK_PROMPT + password
         llama_response = get_llama_response(prompt = llama_prompt)
         if llama_response is not None:
-            print("\n" + llama_response + "\n")
+            print("Feedback:")
+            print("\n\n\n" + llama_response + "\n")
 
 
 if __name__ == "__main__":
